@@ -3,6 +3,7 @@ import { api, type Product, type Stall } from "../../api";
 import { StallForm } from "./StallForm";
 import { ProductForm } from "./ProductForm";
 import { ProductList } from "./ProductList";
+import { MerchantOrders } from "./Orders";
 
 const STATUS_TEXT = {
   PENDING: "Pendiente de aprobación por la administración del mercado.",
@@ -40,6 +41,7 @@ export function MerchantDashboard() {
           <strong>{STATUS_TEXT[stall.status]}</strong> {stall.rejectionReason && `Motivo: ${stall.rejectionReason}`}
         </p>
       </section>
+      {stall.status === "APPROVED" && <MerchantOrders />}
       {stall.status === "APPROVED" && (
         <div className="split">
           <ProductForm onCreated={(p) => setProducts((ps) => [p, ...ps])} />

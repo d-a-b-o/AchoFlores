@@ -33,6 +33,7 @@ describe("Panel del comerciante (HU-03, HU-05, HU-06)", () => {
       if (url.endsWith("/auth/me")) return { body: merchant };
       if (url.endsWith("/stalls/me")) return { body: { ...stall, status: "APPROVED" } };
       if (url.endsWith("/products/mine")) return { body: [product] };
+      if (url.endsWith("/merchant/orders")) return { body: [] };
       if (url.endsWith("/products/p1") && init?.method === "PATCH") return { body: { ...product, active: false } };
     });
     renderWithProviders(<App />, "/mi-puesto");
@@ -48,6 +49,7 @@ describe("Panel del comerciante (HU-03, HU-05, HU-06)", () => {
       if (url.endsWith("/auth/me")) return { body: merchant };
       if (url.endsWith("/stalls/me")) return { body: { ...stall, status: "APPROVED" } };
       if (url.endsWith("/products/mine")) return { body: [] };
+      if (url.endsWith("/merchant/orders")) return { body: [] };
     });
     renderWithProviders(<App />, "/mi-puesto");
     const user = userEvent.setup();
