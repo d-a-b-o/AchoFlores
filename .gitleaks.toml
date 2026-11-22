@@ -1,0 +1,8 @@
+title = "AchoFlores gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Valores de prueba conocidos (no son secretos reales)"
+regexes = ['''postgresql://postgres:test@localhost''', '''dev-only-secret-not-for-production-use''']
