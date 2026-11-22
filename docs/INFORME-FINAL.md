@@ -8,7 +8,8 @@
 | Proyecto Jira (Scrum) | https://dbravoo.atlassian.net/jira/software/projects/ACF/boards/38 |
 | Pipeline CI/CD | https://github.com/d-a-b-o/AchoFlores/actions |
 | Hallazgos de seguridad | https://github.com/d-a-b-o/AchoFlores/security |
-| Solución desplegada | _URL de Render (se completa al configurar el despliegue, ver §8.5)_ |
+| Solución desplegada (producción) | https://achoflores.onrender.com |
+| Entorno de pruebas (staging) | https://achoflores-staging.onrender.com |
 
 ---
 
@@ -20,8 +21,8 @@ Resultado de los 4 sprints:
 
 - **87 story points** entregados en 4 sprints (velocidad 22 · 23 · 18 · 24), 21 historias terminadas, 3 en el Product Backlog para versiones futuras.
 - **143 pruebas automatizadas** en el pipeline (104 de API contra PostgreSQL real y 39 de frontend), con 96 % de cobertura de líneas en la API.
-- **6 controles de seguridad** integrados en el pipeline (ESLint security, CodeQL, npm audit, Dependency Review, Gitleaks, Trivy) más DAST con OWASP ZAP en staging. Todos detuvieron o corrigieron al menos un problema real durante el proyecto (§7.3).
-- Estrategia de ramas `main` / `develop` / `feature/*` con **20 Pull Requests**, 4 releases (v0.1.0 → v1.0.0) y commits con Conventional Commits y la clave de Jira.
+- **6 controles de seguridad** integrados en el pipeline (ESLint security, CodeQL, npm audit, Dependency Review, Gitleaks, Trivy) más DAST con OWASP ZAP y pruebas de humo contra el entorno desplegado. Todos detuvieron o corrigieron al menos un problema real durante el proyecto (§7.3).
+- Estrategia de ramas `main` / `develop` / `feature/*` con **23 Pull Requests**, 4 releases (v0.1.0 → v1.0.0) y commits con Conventional Commits y la clave de Jira.
 
 ---
 
@@ -190,7 +191,7 @@ flowchart LR
 | Fase | Herramientas | Control de seguridad (shift-left) | Evidencia en el proyecto |
 |---|---|---|---|
 | **Plan** | Jira Software (backlog, sprints, Kanban, Timeline) | Criterios de seguridad dentro de las historias (bloqueo tras 5 intentos, no guardar tarjetas, firma del webhook, token de un solo uso) | Issues ACF-7 a ACF-30 |
-| **Code** | VS Code, Git, GitHub, TypeScript estricto, ESLint + `eslint-plugin-security` | PR obligatorio hacia `develop`/`main`; plantilla de PR con la DoD; `.gitleaks.toml` versionado | 20 PRs, plantilla en `.github/` |
+| **Code** | VS Code, Git, GitHub, TypeScript estricto, ESLint + `eslint-plugin-security` | PR obligatorio hacia `develop`/`main`; plantilla de PR con la DoD; `.gitleaks.toml` versionado | 23 PRs, plantilla en `.github/` |
 | **Build** | GitHub Actions, `npm ci` con lockfile, Docker multi-etapa | `npm audit --audit-level=high`, Dependency Review en cada PR, Dependabot semanal (npm, actions, Docker) | 7 PRs de Dependabot (#6–#12) |
 | **Test** | Vitest + Supertest (API contra PostgreSQL 16 real), Vitest + Testing Library (web) | SAST con **CodeQL** (`security-extended`); pruebas de autorización (un comerciante no ve pedidos ajenos, un cliente no paga compras ajenas); cobertura mínima 70 % | 143 pruebas, 96 % de cobertura API |
 | **Release** | GitHub Releases, SemVer, rama `main` solo por PR desde `develop` | Merge solo con checks en verde; **Gitleaks** sobre todo el historial; **Trivy** sobre la imagen | Releases v0.1.0 → v1.0.0 |
@@ -234,6 +235,9 @@ flowchart LR
 | #18 | ACF-19 ACF-22 a ACF-26 lanzamiento | 4 |
 | #19 | Informe final y README | 4 |
 | #20 | **release v1.0.0** | 4 |
+| #21 | Pruebas de humo después del deploy | 4 |
+| #22 | URLs públicas en README e informe | 4 |
+| #23 | **release v1.0.1** (despliegue verificado) | 4 |
 
 ---
 
@@ -249,7 +253,7 @@ Archivo `.github/workflows/ci-cd.yml` (más `dependency-review.yml`). Corre en c
 | Seguridad | Dependencias | `npm audit --audit-level=high` + Dependency Review en PRs | hay vulnerabilidades altas o críticas |
 | Seguridad | Secretos (Gitleaks) | Escaneo del historial de commits del PR | encuentra secretos |
 | Seguridad | Imagen Docker (Trivy) | Construye la imagen y la escanea; sube SARIF a Security | hay HIGH/CRITICAL con parche |
-| Deploy | Deploy | En push a `develop`/`main`: deploy hook de Render y espera de `/health` | el servicio no responde |
+| Deploy | Deploy | En push a `develop`/`main`: deploy hook de Render, espera hasta que `/health` informe el commit recién desplegado y pruebas de humo (`scripts/smoke.sh`) | la versión nueva no responde o falla una prueba de humo |
 | DAST | OWASP ZAP baseline | Escaneo pasivo contra staging tras desplegar `develop` | (informativo) |
 
 ### 7.1 Pruebas
@@ -272,6 +276,27 @@ Archivo `.github/workflows/ci-cd.yml` (más `dependency-review.yml`). Corre en c
 | **Dependabot** | 7 PRs de actualización (acciones de GitHub, dependencias de desarrollo, imagen de Node) | Revisión individual; Node 26 (no LTS) no se adopta |
 
 ### 7.3 Despliegue
+
+**URL pública:** https://achoflores.onrender.com (producción) · https://achoflores-staging.onrender.com (staging).
+
+Pruebas de humo ejecutadas por el pipeline contra staging después del despliegue (job *Deploy a staging*):
+
+```
+✔ /health ok (commit del pipeline)
+✔ PWA servida en /
+✔ cabecera CSP presente
+✔ x-powered-by oculto
+✔ catálogo público con 4 productos
+✔ ruta protegida exige autenticación (401)
+✔ webhook rechaza firma inválida (401)
+✔ registro de cliente
+✔ checkout creado
+✔ pago sandbox aprobado
+✔ «Mis pedidos» muestra la compra pagada
+Flujo de compra de punta a punta: OK
+```
+
+En producción se ejecutan las mismas comprobaciones de solo lectura (sin crear pedidos de prueba). Lección aprendida en el primer despliegue: Render sigue respondiendo con la versión anterior mientras construye la nueva, por lo que `/health` expone el commit (`RENDER_GIT_COMMIT`) y el pipeline espera hasta ver el commit propio antes de dar el despliegue por bueno (PR #21).
 
 `render.yaml` define dos servicios Docker en Render (producción desde `main` y staging desde `develop`) con health check en `/health`, `JWT_SECRET` y `PAYMENT_WEBHOOK_SECRET` generados por Render, y `DATABASE_URL` de Neon como variable secreta. El pipeline solo dispara el despliegue cuando todos los jobs anteriores están en verde. Al arrancar, el contenedor aplica las migraciones (`prisma migrate deploy`) y un seed idempotente que crea la cuenta administradora y un puesto de demostración.
 
@@ -310,4 +335,4 @@ Archivo `.github/workflows/ci-cd.yml` (más `dependency-review.yml`). Corre en c
 - [ ] Pestaña *Pull requests* (cerrados) mostrando las ramas y los merges hacia `develop` y `main`
 - [ ] Pestaña *Actions* con ejecuciones exitosas y el resumen de cobertura
 - [ ] Pestaña *Security* (code scanning: CodeQL y Trivy; Dependabot)
-- [ ] URL pública de la solución desplegada
+- [x] URL pública de la solución desplegada: https://achoflores.onrender.com

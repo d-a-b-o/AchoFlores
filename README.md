@@ -4,8 +4,8 @@ Marketplace web multivendedor (PWA) para el **Mercado de Flores de Acho** (Ríma
 
 | | |
 |---|---|
-| **Producción** | _se completa al desplegar en Render_ |
-| **Staging** | _se completa al desplegar en Render_ |
+| **Producción** | https://achoflores.onrender.com |
+| **Staging** | https://achoflores-staging.onrender.com |
 | **Jira** | Proyecto `ACF` — backlog, sprints y tablero |
 | **Informe final** | [docs/INFORME-FINAL.md](docs/INFORME-FINAL.md) |
 
@@ -84,4 +84,6 @@ Commits con [Conventional Commits](https://www.conventionalcommits.org/es/) y la
 1. **Build**: `npm ci`, ESLint con `eslint-plugin-security`, chequeo de tipos y compilación.
 2. **Test**: Vitest + Supertest contra PostgreSQL 16 en un contenedor de servicio; cobertura mínima 70 % en la API.
 3. **Seguridad** (en paralelo): CodeQL (SAST), `npm audit --audit-level=high`, Dependency Review en PRs, Gitleaks (secretos), Trivy (imagen Docker).
-4. **Deploy**: solo en push a `develop`/`main` con todo en verde; dispara el deploy hook de Render y espera a que `/health` responda. En `develop` corre además OWASP ZAP baseline (DAST).
+4. **Deploy**: solo en push a `develop`/`main` con todo en verde; dispara el deploy hook de Render, espera a que `/health` informe el commit recién desplegado y corre `scripts/smoke.sh` (en staging, una compra completa; en producción, solo lectura). En `develop` corre además OWASP ZAP baseline (DAST).
+
+> En el plan gratuito de Render el servicio se suspende tras 15 min sin tráfico: la primera visita tarda unos 50 s.
