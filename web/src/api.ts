@@ -26,9 +26,38 @@ export interface Product {
   occasion?: string | null;
   price: number;
   priceCents: number;
+  wholesalePrice?: number | null;
+  wholesalePriceCents?: number | null;
+  wholesaleMinQty?: number | null;
   stock: number;
   active: boolean;
   imageUrl: string;
+}
+
+export interface CatalogProduct extends Product {
+  stall: { id: string; name: string; number: string; pavilion: string };
+}
+export interface CatalogPage {
+  items: CatalogProduct[];
+  page: number;
+  pages: number;
+  total: number;
+  suggestions: string[];
+}
+export interface QuoteLine {
+  productId: string;
+  name: string;
+  imageUrl: string;
+  quantity: number;
+  requested: number;
+  unitPriceCents: number;
+  wholesaleApplied: boolean;
+  lineTotalCents: number;
+}
+export interface Quote {
+  stalls: { stall: { id: string; name: string; number: string }; lines: QuoteLine[]; subtotalCents: number }[];
+  totalCents: number;
+  warnings: string[];
 }
 
 export class ApiError extends Error {
