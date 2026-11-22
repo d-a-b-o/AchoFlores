@@ -37,7 +37,9 @@ Requisitos: Node 22 y PostgreSQL 16.
 npm ci
 export DATABASE_URL=postgresql://postgres:test@localhost:5432/achoflores_test
 npm run db:migrate -w api
-SEED_ADMIN_EMAIL=admin@acho.pe SEED_ADMIN_PASSWORD=cambia-esto-123 SEED_DEMO=true npm run db:seed -w api
+export SEED_ADMIN_EMAIL=admin@acho.pe SEED_DEMO=true
+read -rs SEED_ADMIN_PASSWORD && export SEED_ADMIN_PASSWORD   # nunca escribas la clave en archivos
+npm run db:seed -w api
 npm run dev:api   # http://localhost:3000
 npm run dev:web   # http://localhost:5173 (proxy /api → 3000)
 ```
