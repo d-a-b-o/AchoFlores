@@ -19,7 +19,9 @@ export function PurchaseResult() {
       {c.status === "PAID" ? (
         <>
           <h1>¡Pago confirmado!</h1>
-          <p>Tu pedido N.º {c.id.slice(-8).toUpperCase()} ya está en los puestos.</p>
+          <p>Tu pedido N.º {c.id.slice(-8).toUpperCase()} ya está en los puestos. Te enviamos la constancia por correo.</p>
+          {c.scheduledFor && <p className="badge">Programado para el {c.scheduledFor.slice(0, 10)}</p>}
+          <Link to="/mis-pedidos">Seguir mi pedido</Link>
         </>
       ) : c.status === "FAILED" ? (
         <>

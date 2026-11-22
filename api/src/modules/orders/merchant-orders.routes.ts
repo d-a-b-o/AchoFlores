@@ -19,14 +19,22 @@ async function myStallId(userId: string) {
 const orderInclude = {
   items: true,
   events: { orderBy: { createdAt: "asc" } },
-  checkout: { select: { fulfillment: true, district: true, address: true, phone: true, customer: { select: { name: true } } } },
+  checkout: { select: { fulfillment: true, district: true, address: true, phone: true, scheduledFor: true, customer: { select: { name: true } } } },
 } as const;
 
 // HU-15: el comerciante solo ve los pedidos pagados de su propio puesto.
 merchantOrdersRouter.get("/", async (req, res) => {
   const stallId = await myStallId(req.user!.id);
+  // HU-18: ?date=AAAA-MM-DD muestra la agenda de pedidos programados para ese día.
+  const { date } = parse(z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional() }), req.query);
   const orders = await prisma.order.findMany({
-    where: { stallId, status: { not: "PENDING_PAYMENT" } },
+    where: {
+      stallId,
+      status: { not: "PENDING_PAYMENT" },
+      ...(date && {
+        checkout: { scheduledFor: { gte: new Date(`${date}T00:00:00-05:00`), lt: new Date(`${date}T23:59:59.999-05:00`) } },
+      }),
+    },
     orderBy: { createdAt: "desc" },
     include: orderInclude,
   });

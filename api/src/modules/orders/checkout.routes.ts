@@ -17,10 +17,22 @@ const checkoutSchema = z
     address: z.string().trim().min(5).max(200).optional(),
     phone: z.string().trim().regex(/^9\d{8}$/, "Celular peruano de 9 dígitos que empieza con 9"),
     paymentMethod: z.enum(["CARD", "YAPE", "PLIN"]).default("CARD"),
+    // HU-18: fecha de entrega programada (AAAA-MM-DD), entre 1 y 30 días después de hoy.
+    scheduledFor: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha inválida").optional(),
   })
   .superRefine((d, ctx) => {
     if (d.fulfillment === "DELIVERY" && !d.address) ctx.addIssue({ code: "custom", path: ["address"], message: "Indica la dirección de entrega" });
+    if (d.scheduledFor) {
+      const days = daysFromToday(d.scheduledFor);
+      if (!(days >= 1 && days <= 30)) ctx.addIssue({ code: "custom", path: ["scheduledFor"], message: "Programa la entrega entre 1 y 30 días desde hoy" });
+    }
   });
+
+/** Días entre hoy (hora de Lima, UTC-5) y la fecha dada. */
+export function daysFromToday(isoDate: string, now = new Date()) {
+  const today = new Date(now.getTime() - 5 * 3_600_000).toISOString().slice(0, 10);
+  return Math.round((Date.parse(`${isoDate}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86_400_000);
+}
 
 checkoutRouter.get("/districts", (_req, res) => {
   res.json(DISTRICTS.map((d) => ({ district: d, feeCents: deliveryFeeFor(d) })));
@@ -48,6 +60,7 @@ checkoutRouter.post("/", requireAuth, requireRole("CUSTOMER"), async (req, res) 
       address: data.fulfillment === "DELIVERY" ? data.address : null,
       phone: data.phone,
       paymentMethod: data.paymentMethod,
+      scheduledFor: data.scheduledFor ? new Date(`${data.scheduledFor}T12:00:00-05:00`) : null,
       deliveryFeeCents,
       itemsTotalCents: quote.totalCents,
       totalCents: quote.totalCents + deliveryFeeCents,

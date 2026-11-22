@@ -135,8 +135,26 @@ export interface Checkout {
   totalCents: number;
   paymentMethod?: "CARD" | "YAPE" | "PLIN" | null;
   failureReason?: string | null;
-  orders: { id: string; status: OrderStatus; subtotalCents: number; items: OrderItem[]; stall: { name: string; number: string } }[];
+  scheduledFor?: string | null;
+  createdAt?: string;
+  orders: { id: string; status: OrderStatus; subtotalCents: number; items: OrderItem[]; stall: { name: string; number: string }; events?: OrderEvent[] }[];
 }
+export interface AppNotification {
+  id: string;
+  title: string;
+  body: string;
+  link?: string | null;
+  readAt?: string | null;
+  createdAt: string;
+}
+export interface SalesSummary {
+  days: number;
+  salesCents: number;
+  orders: number;
+  topProducts: { name: string; quantity: number; salesCents: number }[];
+  byDay: { day: string; salesCents: number }[];
+}
+export const PAYMENT_LABEL = { CARD: "Tarjeta", YAPE: "Yape", PLIN: "Plin" } as const;
 export interface MerchantOrder {
   id: string;
   status: OrderStatus;
@@ -144,5 +162,5 @@ export interface MerchantOrder {
   createdAt: string;
   items: OrderItem[];
   events: OrderEvent[];
-  checkout: { fulfillment: "DELIVERY" | "PICKUP"; district?: string | null; address?: string | null; phone: string; customer: { name: string } };
+  checkout: { fulfillment: "DELIVERY" | "PICKUP"; district?: string | null; address?: string | null; phone: string; scheduledFor?: string | null; customer: { name: string } };
 }
