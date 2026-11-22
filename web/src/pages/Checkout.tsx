@@ -5,6 +5,8 @@ import { useAuth } from "../auth";
 import { useCart } from "../cart";
 import { Alert, Field } from "../components/Field";
 
+const dateInDays = (n: number) => new Date(Date.now() - 5 * 3_600_000 + n * 86_400_000).toISOString().slice(0, 10);
+
 interface District {
   district: string;
   feeCents: number;
@@ -53,6 +55,7 @@ export function Checkout() {
           fulfillment,
           phone: f.get("phone"),
           paymentMethod: f.get("paymentMethod"),
+          ...(f.get("scheduledFor") && { scheduledFor: f.get("scheduledFor") }),
           ...(fulfillment === "DELIVERY" && { district, address: f.get("address") }),
         },
       });
@@ -99,8 +102,18 @@ export function Checkout() {
         <span>Medio de pago</span>
         <select name="paymentMethod" defaultValue="CARD">
           <option value="CARD">Tarjeta de crédito o débito</option>
+          <option value="YAPE">Yape</option>
+          <option value="PLIN">Plin</option>
         </select>
       </label>
+      <Field
+        label="Programar entrega (opcional)"
+        name="scheduledFor"
+        type="date"
+        min={dateInDays(1)}
+        max={dateInDays(30)}
+        hint="Asegura tus flores para el Día de la Madre, San Valentín o Todos los Santos (de 1 a 30 días)."
+      />
       <Alert>{error}</Alert>
       <button className="btn" disabled={busy}>
         {busy ? "Creando pedido…" : "Ir a pagar"}
