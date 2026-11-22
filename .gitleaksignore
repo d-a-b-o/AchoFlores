@@ -1,0 +1,3 @@
+# Falso positivo revisado: contraseña de ejemplo en el README del commit inicial
+# (ya reemplazada por `read -rs`). No es una credencial real.
+2fd545de91837a10a4ccc9263a67ff409a303e72:README.md:generic-api-key:40
