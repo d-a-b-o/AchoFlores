@@ -74,7 +74,10 @@ export function Cart() {
       {quote && (
         <section className="card total">
           <strong>Total: {formatPEN(quote.totalCents / 100)}</strong>
-          <span className="muted">El pago en línea y el delivery llegan en el próximo sprint.</span>
+          <span className="muted">El delivery se calcula en el siguiente paso.</span>
+          <Link className="btn" to="/checkout">
+            Continuar con la compra
+          </Link>
         </section>
       )}
     </section>

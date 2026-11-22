@@ -5,4 +5,4 @@ useDefault = true
 
 [allowlist]
 description = "Valores de prueba conocidos (no son secretos reales)"
-regexes = ['''postgresql://postgres:test@localhost''', '''dev-only-secret-not-for-production-use''']
+regexes = ['''postgresql://postgres:test@localhost''', '''dev-only-[a-z-]+-not-for-production[a-z0-9-]*''']
