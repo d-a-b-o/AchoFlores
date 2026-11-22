@@ -28,6 +28,10 @@ services:
         value: "true"
       - key: CLOUDINARY_URL
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
 
   - type: web
     name: achoflores-staging
