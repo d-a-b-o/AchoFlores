@@ -8,6 +8,9 @@ import { Cart } from "./pages/Cart";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { useCart } from "./cart";
+import { Checkout } from "./pages/Checkout";
+import { PaymentGateway } from "./pages/PaymentGateway";
+import { PurchaseResult } from "./pages/PurchaseResult";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { MerchantDashboard } from "./pages/merchant/Dashboard";
@@ -50,6 +53,9 @@ export function App() {
           <Route path="/" element={<Catalog />} />
           <Route path="/puestos/:id" element={<StallProfile />} />
           <Route path="/carrito" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/pasarela/:id" element={<PaymentGateway />} />
+          <Route path="/compra/:id" element={<PurchaseResult />} />
           <Route path="/recuperar" element={<ForgotPassword />} />
           <Route path="/restablecer" element={<ResetPassword />} />
           <Route path="/ingresar" element={<Login />} />

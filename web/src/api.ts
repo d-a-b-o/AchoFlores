@@ -102,3 +102,47 @@ export const formatPEN = (n: number) =>
   new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" }).format(n);
 
 export const imageSrc = (url: string) => (url.startsWith("/api") ? `${BASE}${url}` : url);
+
+export type OrderStatus = "PENDING_PAYMENT" | "PAID" | "PREPARING" | "READY" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
+  PENDING_PAYMENT: "Pendiente de pago",
+  PAID: "Pagado",
+  PREPARING: "En preparación",
+  READY: "Listo",
+  SHIPPED: "Enviado",
+  DELIVERED: "Entregado",
+  CANCELLED: "Cancelado",
+};
+export interface OrderItem {
+  id: string;
+  name: string;
+  unitPriceCents: number;
+  quantity: number;
+}
+export interface OrderEvent {
+  id: string;
+  status: OrderStatus;
+  createdAt: string;
+}
+export interface Checkout {
+  id: string;
+  status: "PENDING_PAYMENT" | "PAID" | "FAILED";
+  fulfillment: "DELIVERY" | "PICKUP";
+  district?: string | null;
+  address?: string | null;
+  deliveryFeeCents: number;
+  itemsTotalCents: number;
+  totalCents: number;
+  paymentMethod?: "CARD" | "YAPE" | "PLIN" | null;
+  failureReason?: string | null;
+  orders: { id: string; status: OrderStatus; subtotalCents: number; items: OrderItem[]; stall: { name: string; number: string } }[];
+}
+export interface MerchantOrder {
+  id: string;
+  status: OrderStatus;
+  subtotalCents: number;
+  createdAt: string;
+  items: OrderItem[];
+  events: OrderEvent[];
+  checkout: { fulfillment: "DELIVERY" | "PICKUP"; district?: string | null; address?: string | null; phone: string; customer: { name: string } };
+}

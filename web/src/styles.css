@@ -81,3 +81,13 @@ form { display: grid; gap: 12px; }
 .empty { text-align: center; }
 .wholesale summary { cursor: pointer; color: var(--rose); }
 @media (max-width: 520px) { .cart-line { grid-template-columns: 48px 1fr 60px; } .cart-line .price, .cart-line .link { grid-column: 2 / -1; } }
+.between { justify-content: space-between; align-items: center; }
+.order { display: grid; gap: 6px; }
+.status-chip { font-size: .8rem; padding: 2px 8px; border-radius: 999px; background: #eee; }
+.s-paid { background: #e7f0ff; color: #1d4ed8; }
+.s-preparing { background: #fff3c4; color: #6b4f00; }
+.s-ready, .s-shipped { background: #e7f5ee; color: var(--leaf); }
+.s-delivered { background: #d1fae5; color: #065f46; }
+.s-cancelled { background: #fde8e8; color: #8a1c1c; }
+.history { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }
+.gateway { border: 2px dashed var(--sun); }
