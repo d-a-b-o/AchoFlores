@@ -37,6 +37,9 @@ export function Login() {
         </button>
       </form>
       <p className="muted">
+        <Link to="/recuperar">¿Olvidaste tu contraseña?</Link>
+      </p>
+      <p className="muted">
         ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
       </p>
     </section>

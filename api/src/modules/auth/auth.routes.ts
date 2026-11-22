@@ -3,7 +3,9 @@ import rateLimit from "express-rate-limit";
 import { config } from "../../config";
 import { parse } from "../../middleware/validate";
 import { requireAuth } from "../../middleware/auth";
-import { loginSchema, registerSchema } from "./auth.schemas";
+import { z } from "zod";
+import { loginSchema, passwordSchema, registerSchema } from "./auth.schemas";
+import { requestReset, resetPassword } from "./password-reset";
 import * as auth from "./auth.service";
 
 export const authRouter = Router();
@@ -28,4 +30,17 @@ authRouter.post("/login", authLimiter, async (req, res) => {
 
 authRouter.get("/me", requireAuth, async (req, res) => {
   res.json(await auth.me(req.user!.id));
+});
+
+// HU-21: recuperar contraseña por correo.
+authRouter.post("/forgot-password", authLimiter, async (req, res) => {
+  const { email } = parse(z.object({ email: z.string().trim().toLowerCase().email().max(254) }), req.body);
+  await requestReset(email);
+  res.status(202).json({ message: "Si el correo está registrado, te enviamos un enlace para recuperar tu contraseña." });
+});
+
+authRouter.post("/reset-password", authLimiter, async (req, res) => {
+  const { token, password } = parse(z.object({ token: z.string().min(20).max(200), password: passwordSchema }), req.body);
+  await resetPassword(token, password);
+  res.json({ message: "Contraseña actualizada. Ya puedes ingresar." });
 });

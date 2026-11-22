@@ -29,6 +29,11 @@ export function ProductList({ products, onChange }: { products: Product[]; onCha
               <strong>{p.name}</strong>
               <span className="muted">{CATEGORY_LABELS[p.category] ?? p.category}</span>
               <span className="price">{formatPEN(p.price)}</span>
+              {p.wholesalePrice != null && (
+                <span className="badge">
+                  Mayor: {formatPEN(p.wholesalePrice)} desde {p.wholesaleMinQty} u.
+                </span>
+              )}
               <label className="inline">
                 Stock
                 <input

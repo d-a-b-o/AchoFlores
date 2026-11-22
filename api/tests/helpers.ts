@@ -42,3 +42,9 @@ export const PNG_1PX = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
   "base64",
 );
+
+export async function createProduct(stallId: string, data: Partial<{ name: string; category: string; occasion: string; priceCents: number; stock: number; active: boolean; wholesalePriceCents: number; wholesaleMinQty: number; description: string }> = {}) {
+  return prisma.product.create({
+    data: { stallId, name: "Rosas rojas", category: "rosas", priceCents: 3000, stock: 20, imageUrl: "/api/images/x", ...data },
+  });
+}

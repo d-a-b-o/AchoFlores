@@ -39,6 +39,20 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   stall         Stall?
+  passwordResets PasswordReset[]
+}
+
+// HU-21: token de un solo uso, guardado como hash SHA-256, vence en 30 minutos.
+model PasswordReset {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }
 
 model Stall {
@@ -70,6 +84,9 @@ model Product {
   category    String
   occasion    String?
   priceCents  Int
+  // HU-07: precio unitario por mayor a partir de una cantidad mínima
+  wholesalePriceCents Int?
+  wholesaleMinQty     Int?
   stock       Int
   active      Boolean  @default(true)
   imageUrl    String
