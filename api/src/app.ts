@@ -49,7 +49,13 @@ export function createApp() {
   app.use(express.json({ limit: "100kb" }));
 
   app.get("/health", (_req, res) => {
-    res.json({ status: "ok", service: "achoflores-api", version: process.env.npm_package_version ?? "0.1.0" });
+    // RENDER_GIT_COMMIT lo define Render: permite al pipeline confirmar que responde la versión recién desplegada.
+    res.json({
+      status: "ok",
+      service: "achoflores-api",
+      version: process.env.npm_package_version ?? "1.0.0",
+      commit: process.env.RENDER_GIT_COMMIT ?? null,
+    });
   });
 
   app.use("/api", apiRouter);

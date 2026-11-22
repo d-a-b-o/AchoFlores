@@ -190,16 +190,27 @@ jobs:
           fi
           curl -fsS -X POST "$HOOK" > /dev/null
           echo "Deploy solicitado a Render (commit ${GITHUB_SHA::7})."
-      - name: Esperar a que el servicio responda /health
+      - name: Esperar a que responda la versión recién desplegada
         env:
           TARGET_URL: ${{ github.ref_name == 'main' && vars.PROD_URL || vars.STAGING_URL }}
         run: |
           if [ -z "$TARGET_URL" ]; then echo "URL no configurada"; exit 0; fi
-          for i in $(seq 1 40); do
-            if curl -fsS "$TARGET_URL/health" | grep -q '"status":"ok"'; then echo "Servicio en línea"; exit 0; fi
-            sleep 15
+          # Render sigue respondiendo con la versión anterior mientras construye la nueva:
+          # se espera hasta que /health informe el commit de este pipeline.
+          for i in $(seq 1 60); do
+            commit=$(curl -fsS "$TARGET_URL/health" 2>/dev/null | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{console.log(JSON.parse(s).commit??'')}catch{console.log('')}})" || true)
+            if [ "$commit" = "$GITHUB_SHA" ]; then echo "En línea con el commit ${GITHUB_SHA::7}"; exit 0; fi
+            echo "Esperando… (responde: ${commit:-sin respuesta})"; sleep 15
           done
-          echo "::error::El servicio no respondió a tiempo"; exit 1
+          echo "::error::La nueva versión no respondió en 15 minutos"; exit 1
+      - uses: actions/checkout@v5
+      - name: Pruebas de humo contra el entorno desplegado
+        env:
+          TARGET_URL: ${{ github.ref_name == 'main' && vars.PROD_URL || vars.STAGING_URL }}
+          MODE: ${{ github.ref_name == 'main' && 'readonly' || 'full' }}
+        run: |
+          if [ -z "$TARGET_URL" ]; then echo "URL no configurada"; exit 0; fi
+          ./scripts/smoke.sh "$TARGET_URL" "$MODE" | tee -a "$GITHUB_STEP_SUMMARY"
 
   # DAST: escaneo OWASP ZAP baseline contra staging después de desplegar develop.
   dast:
