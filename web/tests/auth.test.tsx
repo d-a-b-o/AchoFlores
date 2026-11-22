@@ -40,13 +40,14 @@ describe("Registro e inicio de sesión (HU-01, HU-02)", () => {
   it("al ingresar como comerciante lo lleva a su puesto", async () => {
     mockApi((url) => {
       if (url.endsWith("/auth/login")) return { body: { token: "t", user: { id: "1", email: "c@b.pe", name: "Rosa", role: "MERCHANT" } } };
+      if (url.endsWith("/stalls/me")) return { status: 404, body: { error: "Aún no registras tu puesto" } };
     });
     renderWithProviders(<App />, "/ingresar");
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("Correo"), "c@b.pe");
     await user.type(screen.getByLabelText(/^Contraseña/), "secreto123");
     await user.click(screen.getByRole("button", { name: "Ingresar" }));
-    expect(await screen.findByText("Panel del comerciante: próximamente.")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Registra tu puesto" })).toBeInTheDocument();
   });
 
   it("muestra el bloqueo de cuenta tras intentos fallidos", async () => {
