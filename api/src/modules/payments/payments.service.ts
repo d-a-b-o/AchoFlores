@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { logger, securityEvent } from "../../lib/logger";
+import { notifyPaidCheckout } from "../notifications/notify";
 
 export const webhookEventSchema = z.object({
   type: z.enum(["charge.succeeded", "charge.failed"]),
@@ -61,5 +62,6 @@ export async function processPaymentEvent(event: WebhookEvent): Promise<{ status
     logger.warn({ checkoutId: checkout.id }, "Pago recibido sin stock suficiente: requiere reembolso");
     return { status: "out-of-stock" };
   }
+  await notifyPaidCheckout(checkout.id);
   return { status: "paid" };
 }
