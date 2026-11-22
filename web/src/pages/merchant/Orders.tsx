@@ -16,8 +16,13 @@ const nextFor = (o: MerchantOrder) =>
 export function MerchantOrders() {
   const [orders, setOrders] = useState<MerchantOrder[]>([]);
   const [error, setError] = useState("");
+  const [date, setDate] = useState("");
 
-  const load = useCallback(() => api<MerchantOrder[]>("/merchant/orders").then(setOrders).catch((e) => setError((e as Error).message)), []);
+  // HU-18: agenda de pedidos programados para una fecha.
+  const load = useCallback(
+    () => api<MerchantOrder[]>(`/merchant/orders${date ? `?date=${date}` : ""}`).then(setOrders).catch((e) => setError((e as Error).message)),
+    [date],
+  );
   useEffect(() => {
     load();
   }, [load]);
@@ -33,7 +38,13 @@ export function MerchantOrders() {
 
   return (
     <section>
-      <h2>Pedidos</h2>
+      <div className="row between">
+        <h2>Pedidos</h2>
+        <label className="inline">
+          Agenda del día
+          <input type="date" value={date} onChange={(e) => setDate(e.target.value)} aria-label="Agenda del día" />
+        </label>
+      </div>
       {error && <p role="alert" className="alert alert-error">{error}</p>}
       {!orders.length && <p className="muted">Aún no tienes pedidos pagados.</p>}
       <ul className="list">
@@ -43,6 +54,7 @@ export function MerchantOrders() {
               <strong>Pedido {o.id.slice(-6).toUpperCase()}</strong>
               <span className={`status-chip s-${o.status.toLowerCase()}`}>{ORDER_STATUS_LABEL[o.status]}</span>
             </div>
+            {o.checkout.scheduledFor && <span className="badge">Programado para el {o.checkout.scheduledFor.slice(0, 10)}</span>}
             <span>{o.items.map((i) => `${i.quantity} × ${i.name}`).join(", ")}</span>
             <span className="muted">
               {o.checkout.customer.name} · {o.checkout.phone} ·{" "}

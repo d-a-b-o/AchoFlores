@@ -11,6 +11,7 @@ import { useCart } from "./cart";
 import { Checkout } from "./pages/Checkout";
 import { PaymentGateway } from "./pages/PaymentGateway";
 import { PurchaseResult } from "./pages/PurchaseResult";
+import { MyOrders } from "./pages/MyOrders";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { MerchantDashboard } from "./pages/merchant/Dashboard";
@@ -37,6 +38,7 @@ export function App() {
           <Link to="/carrito" aria-label={`Carrito (${count})`}>
             Carrito{count > 0 && <span className="count">{count}</span>}
           </Link>
+          {user?.role === "CUSTOMER" && <Link to="/mis-pedidos">Mis pedidos</Link>}
           {user?.role === "MERCHANT" && <Link to="/mi-puesto">Mi puesto</Link>}
           {user?.role === "ADMIN" && <Link to="/admin">Administración</Link>}
           {user ? (
@@ -56,6 +58,14 @@ export function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/pasarela/:id" element={<PaymentGateway />} />
           <Route path="/compra/:id" element={<PurchaseResult />} />
+          <Route
+            path="/mis-pedidos"
+            element={
+              <RequireRole role="CUSTOMER">
+                <MyOrders />
+              </RequireRole>
+            }
+          />
           <Route path="/recuperar" element={<ForgotPassword />} />
           <Route path="/restablecer" element={<ResetPassword />} />
           <Route path="/ingresar" element={<Login />} />

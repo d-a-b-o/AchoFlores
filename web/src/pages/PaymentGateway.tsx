@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { api, formatPEN, type Checkout } from "../api";
+import { api, formatPEN, PAYMENT_LABEL, type Checkout } from "../api";
 import { useCart } from "../cart";
 
 /**
@@ -38,9 +38,14 @@ export function PaymentGateway() {
   return (
     <section className="card narrow gateway">
       <p className="badge">Pasarela de pago · modo sandbox</p>
-      <h1>Pagar {formatPEN(checkout.totalCents / 100)}</h1>
+      <h1>
+        Pagar {formatPEN(checkout.totalCents / 100)} con {PAYMENT_LABEL[checkout.paymentMethod ?? "CARD"]}
+      </h1>
       <p className="muted">
-        Entorno de pruebas: no ingreses datos reales de tarjeta. Elige el resultado que quieres simular.
+        {checkout.paymentMethod === "YAPE" || checkout.paymentMethod === "PLIN"
+          ? "Entorno de pruebas: en producción escanearías el código QR de la pasarela con tu app."
+          : "Entorno de pruebas: no ingreses datos reales de tarjeta."}{" "}
+        Elige el resultado que quieres simular.
       </p>
       <div className="row">
         <button className="btn" disabled={busy} onClick={() => pay("approve")}>

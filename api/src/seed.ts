@@ -13,7 +13,7 @@ const flower = (emoji: string, bg: string) =>
   )}`;
 
 const DEMO_PRODUCTS = [
-  { name: "Docena de rosas rojas", category: "rosas", occasion: "san-valentin", priceCents: 3500, stock: 60, imageUrl: flower("🌹", "#fde2e7") },
+  { name: "Docena de rosas rojas", category: "rosas", occasion: "san-valentin", priceCents: 3500, wholesalePriceCents: 3000, wholesaleMinQty: 5, stock: 60, imageUrl: flower("🌹", "#fde2e7") },
   { name: "Ramo de girasoles (6 u.)", category: "girasoles", occasion: "cumpleanos", priceCents: 2800, stock: 25, imageUrl: flower("🌻", "#fff3c4") },
   { name: "Arreglo de lirios blancos", category: "lirios", occasion: "condolencias", priceCents: 6500, stock: 8, imageUrl: flower("💐", "#eef3f8") },
   { name: "Tulipanes surtidos (10 u.)", category: "tulipanes", occasion: "dia-de-la-madre", priceCents: 5200, stock: 15, imageUrl: flower("🌷", "#fbe7f1") },

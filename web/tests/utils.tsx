@@ -21,6 +21,9 @@ type Handler = (url: string, init?: RequestInit) => { status?: number; body?: un
 export function mockApi(handler: Handler) {
   return vi.spyOn(globalThis, "fetch").mockImplementation(async (input, init) => {
     const r = handler(String(input), init) ?? { status: 404, body: { error: "no mock" } };
-    return new Response(JSON.stringify(r.body ?? {}), { status: r.status ?? 200, headers: { "Content-Type": "application/json" } });
+    const status = r.status ?? 200;
+    // 204 y 304 no pueden llevar cuerpo (la especificación de fetch lo prohíbe).
+    const body = status === 204 || status === 304 ? null : JSON.stringify(r.body ?? {});
+    return new Response(body, { status, headers: { "Content-Type": "application/json" } });
   });
 }

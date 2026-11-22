@@ -41,6 +41,7 @@ model User {
   stall         Stall?
   passwordResets PasswordReset[]
   checkouts     Checkout[]
+  notifications Notification[]
 }
 
 // HU-21: token de un solo uso, guardado como hash SHA-256, vence en 30 minutos.
@@ -151,6 +152,8 @@ model Checkout {
   chargeId         String?        @unique
   failureReason    String?
   paidAt           DateTime?
+  // HU-18: fecha de entrega programada (1 a 30 días después de la compra)
+  scheduledFor     DateTime?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   orders           Order[]
@@ -196,4 +199,18 @@ model OrderEvent {
   createdAt DateTime    @default(now())
 
   @@index([orderId])
+}
+
+// HU-19: avisos en el panel (además del correo).
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, readAt])
 }

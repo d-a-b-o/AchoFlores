@@ -91,3 +91,16 @@ form { display: grid; gap: 12px; }
 .s-cancelled { background: #fde8e8; color: #8a1c1c; }
 .history { margin: 6px 0 0; padding-left: 18px; color: var(--muted); font-size: .9rem; }
 .gateway { border: 2px dashed var(--sun); }
+.track { display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 8px; }
+.steps-bar { display: flex; gap: 4px; list-style: none; padding: 0; margin: 4px 0; flex-wrap: wrap; }
+.steps-bar li { flex: 1; min-width: 70px; text-align: center; font-size: .75rem; padding: 4px; border-radius: 6px; background: #f1e7e4; color: var(--muted); }
+.steps-bar li.done { background: var(--leaf); color: #fff; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin: 12px 0; }
+.stat { display: grid; gap: 2px; background: var(--bg); border-radius: 10px; padding: 10px; }
+.stat strong { font-size: 1.3rem; }
+.bars { list-style: none; padding: 0; display: grid; gap: 6px; }
+.bars li { display: grid; grid-template-columns: 48px 1fr 80px; gap: 8px; align-items: center; }
+.bar { display: block; height: 12px; background: var(--rose); border-radius: 6px; min-width: 4px; }
+.notifications { border-left: 6px solid var(--rose); margin-bottom: 12px; }
+.notifications li { display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+h3 { font-size: 1rem; margin: 12px 0 6px; }
