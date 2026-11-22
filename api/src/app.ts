@@ -9,6 +9,7 @@ import { config } from "./config";
 import { logger } from "./lib/logger";
 import { errorHandler, notFoundHandler } from "./middleware/error";
 import { apiRouter } from "./routes";
+import { paymentsWebhookRouter } from "./modules/payments/payments.routes";
 
 export function createApp() {
   const app = express();
@@ -43,6 +44,8 @@ export function createApp() {
       message: { error: "Demasiadas solicitudes. Intenta en un minuto.", code: "RATE_LIMITED" },
     }),
   );
+  // El webhook necesita el cuerpo crudo para verificar la firma HMAC: va antes del parser JSON.
+  app.use("/api/payments/webhook", paymentsWebhookRouter);
   app.use(express.json({ limit: "100kb" }));
 
   app.get("/health", (_req, res) => {
