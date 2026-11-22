@@ -1,0 +1,65 @@
+:root {
+  --rose: #b0244f;
+  --rose-dark: #8a1c3e;
+  --leaf: #2d6a4f;
+  --sun: #ffd166;
+  --bg: #fff8f5;
+  --card: #ffffff;
+  --text: #2b2024;
+  --muted: #6f5f65;
+  --line: #ecdcd6;
+  --radius: 14px;
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); }
+main { max-width: 1080px; margin: 0 auto; padding: 16px; min-height: 70vh; }
+h1 { font-size: 1.6rem; margin: 0 0 12px; }
+h2 { font-size: 1.2rem; margin: 0 0 12px; }
+a { color: var(--rose); }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 2; }
+.topbar nav { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.brand { display: flex; gap: 8px; align-items: center; font-weight: 700; text-decoration: none; color: var(--rose); font-size: 1.15rem; }
+.footer { text-align: center; color: var(--muted); padding: 24px 16px; font-size: .9rem; }
+.hero { background: linear-gradient(135deg, var(--rose), #d94f70); color: #fff; padding: 32px 20px; border-radius: var(--radius); }
+.hero h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+.hero .btn-ghost { color: #fff; border-color: #fff; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+.steps article, .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+.narrow { max-width: 420px; margin: 24px auto; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.split { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 16px; margin-top: 16px; align-items: start; }
+@media (max-width: 720px) { .split, .grid-2 { grid-template-columns: 1fr; } }
+form { display: grid; gap: 12px; }
+.field { display: grid; gap: 4px; font-size: .95rem; }
+.field input, .field select, .inline input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; width: 100%; }
+.field small, .muted { color: var(--muted); }
+.check { display: flex; gap: 8px; align-items: flex-start; font-size: .9rem; }
+.segmented { border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+.btn { font: inherit; display: inline-flex; justify-content: center; align-items: center; gap: 6px; border: 2px solid var(--rose); background: var(--rose); color: #fff; padding: 10px 16px; border-radius: 999px; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn:hover { background: var(--rose-dark); border-color: var(--rose-dark); }
+.btn:disabled { opacity: .6; cursor: wait; }
+.btn-ghost { background: transparent; color: var(--rose); }
+.btn-ghost:hover { background: #fbe9ee; }
+.btn-small { padding: 6px 12px; font-size: .9rem; }
+.link { background: none; border: 0; color: var(--rose); cursor: pointer; font: inherit; padding: 0; }
+.alert { margin: 0; padding: 10px 12px; border-radius: 10px; }
+.alert-error { background: #fde8e8; color: #8a1c1c; }
+.alert-ok, .alert-info { background: #e7f5ee; color: var(--leaf); }
+.status-pending { border-left: 6px solid var(--sun); }
+.status-approved { border-left: 6px solid var(--leaf); }
+.status-rejected { border-left: 6px solid #c0392b; }
+.list { list-style: none; padding: 0; display: grid; gap: 10px; }
+.list li { display: grid; gap: 6px; }
+.product-grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.product { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.product img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: #f6ecea; }
+.product-body { display: grid; gap: 4px; padding: 10px; }
+.product.is-off { opacity: .55; }
+.price { font-weight: 700; color: var(--rose); }
+.inline { display: flex; gap: 8px; align-items: center; font-size: .9rem; }
+.inline input { width: 80px; padding: 6px 8px; }

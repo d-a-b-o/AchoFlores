@@ -1,0 +1,51 @@
+# Blueprint de Render: producción (main) y staging (develop).
+# El despliegue lo dispara el pipeline de GitHub Actions mediante deploy hooks,
+# solo cuando build, tests y escaneos de seguridad están en verde.
+services:
+  - type: web
+    name: achoflores
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # cadena de conexión de Neon (rama main)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: SEED_DEMO
+        value: "true"
+      - key: CLOUDINARY_URL
+        sync: false
+
+  - type: web
+    name: achoflores-staging
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: develop
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # cadena de conexión de Neon (rama staging)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: SEED_DEMO
+        value: "true"

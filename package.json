@@ -1,0 +1,23 @@
+{
+  "name": "achoflores",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Marketplace multivendedor del Mercado de Flores de Acho (Rímac, Lima)",
+  "workspaces": [
+    "api",
+    "web"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "npm run lint --workspaces",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces",
+    "dev:api": "npm run dev -w api",
+    "dev:web": "npm run dev -w web"
+  },
+  "overrides": {
+    "effect": "^3.22.5"
+  }
+}
