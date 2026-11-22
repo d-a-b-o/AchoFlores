@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # Imagen única: compila la PWA (web/) y la API (api/); la API sirve ambas.
 
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY api/package.json api/
@@ -11,7 +11,7 @@ COPY . .
 RUN npm run build -w web && npm run build -w api \
  && npm prune --omit=dev --no-audit --no-fund
 
-FROM node:22-alpine AS runtime
+FROM node:26-alpine AS runtime
 ENV NODE_ENV=production PORT=3000
 WORKDIR /app
 # npm, npx, corepack y yarn no se usan en ejecución: se eliminan para reducir
