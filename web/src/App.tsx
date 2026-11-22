@@ -5,6 +5,8 @@ import type { Role } from "./api";
 import { Catalog } from "./pages/Catalog";
 import { StallProfile } from "./pages/StallProfile";
 import { Cart } from "./pages/Cart";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { ResetPassword } from "./pages/ResetPassword";
 import { useCart } from "./cart";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
@@ -48,6 +50,8 @@ export function App() {
           <Route path="/" element={<Catalog />} />
           <Route path="/puestos/:id" element={<StallProfile />} />
           <Route path="/carrito" element={<Cart />} />
+          <Route path="/recuperar" element={<ForgotPassword />} />
+          <Route path="/restablecer" element={<ResetPassword />} />
           <Route path="/ingresar" element={<Login />} />
           <Route path="/registro" element={<Register />} />
           <Route
