@@ -1,0 +1,89 @@
+// AchoFlores — modelo de datos
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  MERCHANT
+  COURIER
+  ADMIN
+}
+
+enum StallStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DocumentType {
+  DNI
+  RUC
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  role          Role      @default(CUSTOMER)
+  failedLogins  Int       @default(0)
+  lockedUntil   DateTime?
+  consentAt     DateTime
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  stall         Stall?
+}
+
+model Stall {
+  id              String       @id @default(cuid())
+  ownerId         String       @unique
+  owner           User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name            String
+  number          String       @unique
+  pavilion        String
+  schedule        String
+  documentType    DocumentType
+  documentNumber  String
+  status          StallStatus  @default(PENDING)
+  rejectionReason String?
+  reviewedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  products        Product[]
+
+  @@index([status])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  stallId     String
+  stall       Stall    @relation(fields: [stallId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  category    String
+  occasion    String?
+  priceCents  Int
+  stock       Int
+  active      Boolean  @default(true)
+  imageUrl    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([stallId])
+  @@index([category])
+}
+
+// Almacenamiento de imágenes de respaldo cuando Cloudinary no está configurado.
+model ImageBlob {
+  id        String   @id @default(cuid())
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
+}
