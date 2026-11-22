@@ -1,0 +1,11 @@
+{
+  "name": "AchoFlores · Mercado de Flores de Acho",
+  "short_name": "AchoFlores",
+  "description": "Flores del Mercado de Acho a precio de mercado, con delivery en Lima.",
+  "lang": "es-PE",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff8f5",
+  "theme_color": "#b0244f",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
