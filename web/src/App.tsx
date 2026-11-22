@@ -5,6 +5,8 @@ import type { Role } from "./api";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { MerchantDashboard } from "./pages/merchant/Dashboard";
+import { AdminStalls } from "./pages/admin/Stalls";
 
 function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -43,7 +45,7 @@ export function App() {
             path="/mi-puesto"
             element={
               <RequireRole role="MERCHANT">
-                <p>Panel del comerciante: próximamente.</p>
+                <MerchantDashboard />
               </RequireRole>
             }
           />
@@ -51,7 +53,7 @@ export function App() {
             path="/admin"
             element={
               <RequireRole role="ADMIN">
-                <p>Panel de administración: próximamente.</p>
+                <AdminStalls />
               </RequireRole>
             }
           />
