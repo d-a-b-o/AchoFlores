@@ -40,6 +40,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   stall         Stall?
   passwordResets PasswordReset[]
+  checkouts     Checkout[]
 }
 
 // HU-21: token de un solo uso, guardado como hash SHA-256, vence en 30 minutos.
@@ -71,6 +72,7 @@ model Stall {
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   products        Product[]
+  orders          Order[]
 
   @@index([status])
 }
@@ -103,4 +105,95 @@ model ImageBlob {
   mimeType  String
   data      Bytes
   createdAt DateTime @default(now())
+}
+
+enum Fulfillment {
+  DELIVERY
+  PICKUP
+}
+
+enum PaymentMethod {
+  CARD
+  YAPE
+  PLIN
+}
+
+enum CheckoutStatus {
+  PENDING_PAYMENT
+  PAID
+  FAILED
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  PREPARING
+  READY
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// Una compra del cliente (un solo pago) que agrupa los pedidos de varios puestos.
+model Checkout {
+  id               String         @id @default(cuid())
+  customerId       String
+  customer         User           @relation(fields: [customerId], references: [id])
+  status           CheckoutStatus @default(PENDING_PAYMENT)
+  fulfillment      Fulfillment
+  district         String?
+  address          String?
+  phone            String
+  deliveryFeeCents Int            @default(0)
+  itemsTotalCents  Int
+  totalCents       Int
+  paymentMethod    PaymentMethod?
+  chargeId         String?        @unique
+  failureReason    String?
+  paidAt           DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  orders           Order[]
+
+  @@index([customerId])
+}
+
+// Pedido de un puesto dentro de una compra (HU-15: el comerciante solo ve los suyos).
+model Order {
+  id            String       @id @default(cuid())
+  checkoutId    String
+  checkout      Checkout     @relation(fields: [checkoutId], references: [id], onDelete: Cascade)
+  stallId       String
+  stall         Stall        @relation(fields: [stallId], references: [id])
+  status        OrderStatus  @default(PENDING_PAYMENT)
+  subtotalCents Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  items         OrderItem[]
+  events        OrderEvent[]
+
+  @@index([stallId, status])
+}
+
+// El precio se copia al detalle: editar el producto no cambia pedidos ya hechos (HU-06).
+model OrderItem {
+  id             String @id @default(cuid())
+  orderId        String
+  order          Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  name           String
+  unitPriceCents Int
+  quantity       Int
+}
+
+// Historial de estados con fecha y hora (HU-15, HU-17).
+model OrderEvent {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now())
+
+  @@index([orderId])
 }
