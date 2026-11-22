@@ -4,6 +4,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import pinoHttp from "pino-http";
+import rateLimit from "express-rate-limit";
 import { config } from "./config";
 import { logger } from "./lib/logger";
 import { errorHandler, notFoundHandler } from "./middleware/error";
@@ -32,6 +33,16 @@ export function createApp() {
     app.use(cors({ origin: config.CORS_ORIGIN.split(","), credentials: false }));
   }
   app.use(pinoHttp({ logger, autoLogging: !config.isTest }));
+  // Límite global por IP (mitiga abuso y DoS de aplicación); login y pagos tienen uno más estricto.
+  app.use(
+    rateLimit({
+      windowMs: 60_000,
+      limit: config.isTest ? 10_000 : 300,
+      standardHeaders: "draft-7",
+      legacyHeaders: false,
+      message: { error: "Demasiadas solicitudes. Intenta en un minuto.", code: "RATE_LIMITED" },
+    }),
+  );
   app.use(express.json({ limit: "100kb" }));
 
   app.get("/health", (_req, res) => {
