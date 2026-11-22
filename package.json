@@ -1,7 +1,7 @@
 {
   "name": "achoflores",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Marketplace multivendedor del Mercado de Flores de Acho (Rímac, Lima)",
   "workspaces": [
     "api",
