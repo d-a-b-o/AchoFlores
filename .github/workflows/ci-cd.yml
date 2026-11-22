@@ -35,7 +35,7 @@ jobs:
         run: npm run lint
       - name: Build (web + api)
         run: npm run build
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: web-dist
           path: web/dist
@@ -84,7 +84,7 @@ jobs:
             out+=`| ${p} | ${t.lines.pct}% | ${t.statements.pct}% | ${t.functions.pct}% | ${t.branches.pct}% |\n`;
           }
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,out);'
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: coverage-y-resultados
