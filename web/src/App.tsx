@@ -2,7 +2,10 @@ import type { ReactNode } from "react";
 import { Link, Navigate, Route, Routes } from "react-router";
 import { useAuth } from "./auth";
 import type { Role } from "./api";
-import { Home } from "./pages/Home";
+import { Catalog } from "./pages/Catalog";
+import { StallProfile } from "./pages/StallProfile";
+import { Cart } from "./pages/Cart";
+import { useCart } from "./cart";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { MerchantDashboard } from "./pages/merchant/Dashboard";
@@ -18,6 +21,7 @@ function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
 
 export function App() {
   const { user, logout } = useAuth();
+  const { count } = useCart();
   return (
     <>
       <header className="topbar">
@@ -25,6 +29,9 @@ export function App() {
           <img src="/icon.svg" alt="" width={28} height={28} /> AchoFlores
         </Link>
         <nav>
+          <Link to="/carrito" aria-label={`Carrito (${count})`}>
+            Carrito{count > 0 && <span className="count">{count}</span>}
+          </Link>
           {user?.role === "MERCHANT" && <Link to="/mi-puesto">Mi puesto</Link>}
           {user?.role === "ADMIN" && <Link to="/admin">Administración</Link>}
           {user ? (
@@ -38,7 +45,9 @@ export function App() {
       </header>
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Catalog />} />
+          <Route path="/puestos/:id" element={<StallProfile />} />
+          <Route path="/carrito" element={<Cart />} />
           <Route path="/ingresar" element={<Login />} />
           <Route path="/registro" element={<Register />} />
           <Route

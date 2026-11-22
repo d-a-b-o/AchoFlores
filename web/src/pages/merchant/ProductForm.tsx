@@ -16,7 +16,7 @@ export function ProductForm({ onCreated }: { onCreated: (p: Product) => void }) 
     const image = data.get("image") as File | null;
     if (!image || image.size === 0) return setError("Agrega una foto del producto");
     if (image.size > MAX_BYTES) return setError("La imagen supera 5 MB");
-    if (!data.get("occasion")) data.delete("occasion");
+    for (const k of ["occasion", "wholesalePrice", "wholesaleMinQty"]) if (!data.get(k)) data.delete(k);
     setBusy(true);
     setError("");
     try {
@@ -79,6 +79,13 @@ export function ProductForm({ onCreated }: { onCreated: (p: Product) => void }) 
         <Field label="Precio (S/)" name="price" type="number" step="0.10" min="0.10" required inputMode="decimal" />
         <Field label="Stock" name="stock" type="number" min="0" step="1" required inputMode="numeric" />
       </div>
+      <details className="wholesale">
+        <summary>Precio por mayor (opcional)</summary>
+        <div className="grid-2">
+          <Field label="Precio por mayor c/u (S/)" name="wholesalePrice" type="number" step="0.10" min="0.10" inputMode="decimal" />
+          <Field label="Desde (unidades)" name="wholesaleMinQty" type="number" min="2" step="1" inputMode="numeric" placeholder="12" />
+        </div>
+      </details>
       <Alert>{error}</Alert>
       <button className="btn" disabled={busy}>
         {busy ? "Publicando…" : "Publicar"}
