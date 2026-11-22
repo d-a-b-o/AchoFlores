@@ -9,6 +9,9 @@ const schema = z.object({
   CORS_ORIGIN: z.string().optional(),
   CLOUDINARY_URL: z.string().optional(),
   WEB_DIST: z.string().optional(),
+  PUBLIC_URL: z.string().url().default("http://localhost:5173"),
+  RESEND_API_KEY: z.string().optional(),
+  MAIL_FROM: z.string().default("AchoFlores <onboarding@resend.dev>"),
   LOG_LEVEL: z.string().default("info"),
 });
 
