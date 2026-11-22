@@ -8,6 +8,9 @@ import { cartRouter } from "./modules/cart/cart.routes";
 import { checkoutRouter } from "./modules/orders/checkout.routes";
 import { merchantOrdersRouter } from "./modules/orders/merchant-orders.routes";
 import { sandboxGatewayRouter } from "./modules/payments/payments.routes";
+import { customerOrdersRouter } from "./modules/orders/customer-orders.routes";
+import { notificationsRouter } from "./modules/notifications/notifications.routes";
+import { dashboardRouter } from "./modules/dashboard/dashboard.routes";
 
 export const apiRouter = Router();
 
@@ -21,3 +24,6 @@ apiRouter.use("/cart", cartRouter);
 apiRouter.use("/checkout", checkoutRouter);
 apiRouter.use("/merchant/orders", merchantOrdersRouter);
 apiRouter.use("/sandbox-gateway", sandboxGatewayRouter);
+apiRouter.use("/orders", customerOrdersRouter);
+apiRouter.use("/notifications", notificationsRouter);
+apiRouter.use("/merchant/dashboard", dashboardRouter);
